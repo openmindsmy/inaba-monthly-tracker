@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inaba Ciao . Social Performance Tracker</title>
+<style>
+:root{
+  color-scheme: light;
+  --navy:#1F3864; --red:#E4002B; --ink:#222B3A; --grey:#6B7688;
+  --card:#F5F8FC; --hair:#EEF2F8; --white:#fff;
+  --ok:#1E7B34; --okbg:#E1F0E4; --warn:#B7791F; --warnbg:#FBEFD6; --bad:#C0392B; --badbg:#F8DEDE;
+  --fb:#1877F2; --ig:#E4405F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 70px}
+h1{font-size:25px;margin:0 0 4px;color:var(--navy);letter-spacing:-.2px}
+h2{font-size:18px;margin:34px 0 4px;color:var(--navy)}
+.sub{color:var(--grey);margin:0 0 18px;font-size:14px}
+.note{color:var(--grey);font-size:13px;margin:6px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.bar .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey);margin-right:4px}
+button{font:inherit;cursor:pointer;border:1px solid var(--hair);background:#fff;color:var(--ink);
+  padding:7px 13px;border-radius:999px;font-size:13.5px;transition:.12s}
+button:hover{border-color:#cdd8e8}
+button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+#marketTabs button[aria-pressed="true"]{background:var(--red);border-color:var(--red)}
+.scope{background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:11px 14px;
+  font-size:13.5px;color:var(--grey);margin:6px 0 20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.c{border:1px solid var(--hair);border-radius:12px;padding:16px 17px;background:#fff}
+.c .top{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.c .nm{font-weight:700;font-size:14.5px;color:var(--navy)}
+.big{font-size:29px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+.unit{font-size:15px;font-weight:600;color:var(--grey);margin-left:2px}
+.sub2{font-size:12.5px;color:var(--grey);margin-top:5px}
+.row2{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;margin-top:9px}
+.pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)} .pill.na{background:var(--hair);color:var(--grey)}
+.delta{font-size:12.5px;font-weight:700}
+.delta.up{color:var(--ok)} .delta.down{color:var(--bad)} .delta.flat{color:var(--grey)}
+.arrow{margin-right:2px}
+.ico{width:19px;height:19px;flex:0 0 19px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:10px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--hair);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:var(--card);color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+tbody tr:hover{background:#FAFCFF}
+thead tr:first-child th{padding-bottom:5px}
+thead tr:last-child th{padding-top:9px}
+thead th.grp{background:var(--navy);color:#9FB0CA;font-size:10.5px;font-weight:700;
+  border-bottom:0;padding-bottom:2px;letter-spacing:.09em}
+#tblDetail tbody tr:nth-child(odd) td{background:#fff}
+#tblDetail tbody tr:nth-child(even) td{background:#F9FBFD}
+#tblDetail tbody tr:hover td{background:#F2F7FC}
+td.er{font-weight:800}
+td.plat{font-weight:700;box-shadow:inset 3px 0 0 var(--c)}
+.platname{display:inline-flex;align-items:center;gap:9px}
+tr.sub td{font-size:10.5px;color:var(--grey);font-weight:700;text-align:left;
+  letter-spacing:.06em;padding-top:12px;padding-bottom:9px}
+#tblDetail tbody tr.sub td,#tblDetail tbody tr.sub:hover td{background:#F0F4F8}
+#tblDetail tbody tr td.hit{background:var(--okbg)}
+#tblDetail tbody tr td.miss{background:var(--badbg)}
+#tblDetail tbody tr:hover td.hit{background:#D6EADC}
+#tblDetail tbody tr:hover td.miss{background:#F2D2D2}
+td.kpi{color:var(--grey);font-weight:700}
+#tblDetail{min-width:900px}
+.wrapT{overflow-x:auto;border:1px solid var(--hair);border-radius:12px}
+.muted{color:var(--grey)}
+.tip{border-bottom:1px dotted #B9C4D4;cursor:help}
+#tt{position:fixed;z-index:99;max-width:290px;background:var(--ink);color:#fff;font-size:12.5px;
+  line-height:1.45;padding:9px 11px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .12s}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--grey)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Inaba Ciao . Social Performance Tracker</h1>
+<p class="sub">Facebook and Instagram, Malaysia and Singapore. Organic and paid from the OpenMinds social dashboard.</p>
+
+<div class="bar"><span class="lbl">Market</span><span id="marketTabs">
+<button data-m="MY" aria-pressed="true">Malaysia</button>
+<button data-m="SG" aria-pressed="false">Singapore</button>
+</span></div>
+
+<div class="bar"><span class="lbl">Period</span><span id="periodTabs">
+<button data-p="mtd" aria-pressed="true">Month to date</button>
+<button data-p="lastmon" aria-pressed="false">Last month</button>
+<button data-p="last30" aria-pressed="false">Last 30 days</button>
+<button data-p="last7" aria-pressed="false">Last 7 days</button>
+</span></div>
+
+<div class="bar"><span class="lbl">View</span><span id="viewTabs">
+<button data-v="er" aria-pressed="true">Engagement rate</button>
+<button data-v="fg" aria-pressed="false">New follows</button>
+<button data-v="vv" aria-pressed="false">Video views</button>
+<button data-v="paid" aria-pressed="false">Paid efficiency</button>
+</span></div>
+
+<div class="scope" id="scopeNote"></div>
+
+<h2 id="h1a"></h2>
+<p class="sub" id="p1a"></p>
+<div class="cards" id="cards"></div>
+
+<h2 id="h2a"></h2>
+<p class="sub" id="p2a"></p>
+<div class="wrapT" id="wrapDetail"><table id="tblDetail"></table></div>
+
+<h2 id="h3a"></h2>
+<p class="sub" id="p3a"></p>
+<div class="wrapT"><table id="tblTrend"></table></div>
+
+<h2 id="h4a"></h2>
+<p class="sub" id="p4a"></p>
+<div class="wrapT" id="wrapExtra"><table id="tblExtra"></table></div>
+
+<footer id="foot"></footer>
+</div>
+<div id="tt"></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Inaba Ciao social tracker. All figures from socialdashboard.openminds.my.
+//
+// Organic posts are bucketed on published_at, NOT on the API's from/to filter.
+// That filter does not filter on publish date for these two accounts: an August
+// query returns 15 Malaysia posts of which 11 were published in July, a cohort of
+// boosted July posts that leaks into every later window. Sunway does not show this.
+//
+// Organic engagements: Facebook reactions + comments + shares.
+//                      Instagram likes + comments + shares + saved.
+// Blended ER = (organic eng + paid eng) / (organic reach + paid impressions),
+// each platform on its own. Never combine markets: reach is deduplicated people
+// and Malaysia plus Singapore cannot be summed.
+// ---------------------------------------------------------------------------
+
+const MONTHS = ["2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"];
+const z = {posts:0,reach:0,eng:0,vv:0,shares:0,saves:0};
+const O = (posts,reach,eng,vv,shares,saves) => ({posts,reach,eng,vv,shares,saves});
+const P = (spend,impr,eng,vv,reach,clicks) => ({spend,impr,eng,vv,reach,clicks});
+
+const DATA = {
+ MY: {
+  "2026-04":{o:{facebook:O(0,0,0,0,0,0), instagram:O(0,0,0,0,0,0)}, p:{}},
+  "2026-05":{o:{facebook:O(4,1798,17,0,1,0), instagram:O(12,13014,314,21005,55,11)}, p:{}},
+  "2026-06":{o:{facebook:O(0,0,0,0,0,0), instagram:O(0,0,0,0,0,0)}, p:{}},
+  "2026-07":{o:{facebook:O(7,9504,164,8983,3,0), instagram:O(8,13230,564,29813,107,21)},
+    p:{audience_network:P(434.01,46504,44661,46243,14052,0), facebook:P(226.51,86202,10886,80337,39910,968),
+       instagram:P(78.15,29056,2249,28752,13120,7), messenger:P(0.05,185,39,160,182,0),
+       threads:P(8.82,12636,8296,12276,12636,0)}},
+  "2026-08":{o:{facebook:O(2,1866,72,0,14,0), instagram:O(2,6918,925,14055,302,24)},
+    p:{facebook:P(518.75,89753,17599,84849,37273,2119), instagram:P(240.01,50290,7340,48590,27938,492)}},
+  "2026-09":{o:{facebook:O(5,1016,8,132,2,0), instagram:O(4,3786,121,8165,13,3)}, p:{}}
+ },
+ SG: {
+  "2026-04":{o:{facebook:O(0,0,0,0,0,0), instagram:O(4,909,23,1405,1,2)}, p:{}},
+  "2026-05":{o:{facebook:O(0,0,0,0,0,0), instagram:O(3,1812,128,4649,10,2)}, p:{}},
+  "2026-06":{o:{facebook:O(0,0,0,0,0,0), instagram:O(5,3524,792,9265,51,13)}, p:{}},
+  "2026-07":{o:{facebook:O(6,7147,223,16872,1,0), instagram:O(8,5764,474,9754,149,37)},
+    p:{facebook:P(491.38,38235,5306,34203,15377,826), instagram:P(290.60,18368,3043,17288,9234,208)}},
+  "2026-08":{o:{facebook:O(1,6113,17,0,0,0), instagram:O(2,1708,361,3834,59,2)},
+    p:{facebook:P(1158.88,133692,19513,115900,45538,1961), instagram:P(846.02,53889,8776,44827,23533,738),
+       threads:P(11.16,2505,8,0,1066,5)}},
+  "2026-09":{o:{facebook:O(2,7,0,8,0,0), instagram:O(3,213,24,414,1,0)}, p:{}}
+ }
+};
+
+// New follows, gross, from the dashboard follower endpoint. Gross is the basis this
+// account reports on: July Malaysia Instagram reads 3,573 gross against 2,998 net.
+// null means the endpoint returned nothing for that month, which happens on Instagram
+// in several months. Those need reading off MBS Audience > Trends > Follows instead.
+const FOL = {
+ MY:{"2026-04":{fb:571,ig:66},"2026-05":{fb:803,ig:null},"2026-06":{fb:171,ig:378},
+     "2026-07":{fb:1246,ig:3573},"2026-08":{fb:197,ig:null},"2026-09":{fb:96,ig:219}},
+ SG:{"2026-04":{fb:0,ig:14},"2026-05":{fb:0,ig:null},"2026-06":{fb:0,ig:163},
+     "2026-07":{fb:25,ig:null},"2026-08":{fb:31,ig:null},"2026-09":{fb:0,ig:3}}
+};
+
+// Rolling windows, each with the matching previous window so comparisons are like for like.
+const WIN = {
+ MY:{
+  last7: {o:{facebook:O(3,539,4,132,0,0), instagram:O(3,2360,98,4985,10,3)}, p:{}, fol:{fb:42,ig:94}},
+  prev7: {o:{facebook:O(2,477,4,0,2,0), instagram:O(1,1426,23,3180,3,0)}, p:{}, fol:{fb:54,ig:125}},
+  last30:{o:{facebook:O(7,2882,80,132,16,0), instagram:O(6,10704,1046,22220,315,27)},
+    p:{facebook:P(383.88,69587,13157,65893,30330,1484), instagram:P(154.97,29169,4344,28389,18964,337)},
+    fol:{fb:255,ig:596}},
+  prev30:{o:{facebook:O(3,6206,111,8740,2,0), instagram:O(4,5301,251,9918,37,8)},
+    p:{audience_network:P(434.12,46504,44661,46243,14052,0), facebook:P(261.07,65681,10013,61903,35271,1267),
+       instagram:P(158.06,48239,5157,47040,23832,162), messenger:P(0.05,185,39,160,182,0),
+       threads:P(8.83,12635,8296,12276,12635,0)},
+    fol:{fb:60,ig:126}}
+ },
+ SG:{
+  last7: {o:{facebook:O(2,7,0,8,0,0), instagram:O(2,120,16,245,1,0)}, p:{}, fol:{fb:0,ig:1}},
+  prev7: {o:{facebook:O(0,0,0,0,0,0), instagram:O(1,93,8,169,0,0)}, p:{}, fol:{fb:0,ig:2}},
+  last30:{o:{facebook:O(2,7,0,8,0,0), instagram:O(4,705,49,1106,2,0)},
+    p:{facebook:P(430.66,45529,6040,35942,22249,645), instagram:P(288.53,15990,2239,10539,8936,215),
+       threads:P(8.16,1872,7,0,921,5)},
+    fol:{fb:9,ig:31}},
+  prev30:{o:{facebook:O(4,11943,209,16837,1,0), instagram:O(5,2197,403,4856,63,6)},
+    p:{facebook:P(1171.13,121161,18055,110011,41157,2068), instagram:P(847.29,56171,9570,51481,23680,731),
+       threads:P(3.00,633,1,0,387,0)},
+    fol:{fb:47,ig:91}}
+ }
+};
+
+const PERIODS = {
+  mtd:     {label:"Month to date", range:"1 to 14 Sep 2026",     vs:"August",              month:"2026-09"},
+  lastmon: {label:"Last month",    range:"1 to 31 Aug 2026",     vs:"July",                month:"2026-08"},
+  last30:  {label:"Last 30 days",  range:"16 Aug to 14 Sep 2026",vs:"the 30 days before",  win:"last30", prevWin:"prev30"},
+  last7:   {label:"Last 7 days",   range:"8 to 14 Sep 2026",     vs:"the 7 days before",   win:"last7",  prevWin:"prev7"}
+};
+
+// Both ad accounts report spend in MYR, so Singapore is RM too, not SGD.
+const MARKETS = {MY:{label:"Malaysia", cur:"RM"}, SG:{label:"Singapore", cur:"RM"}};
+
+// KPI bands from the Inaba Ciao 2026-2027 brief. ER is the primary guaranteed KPI.
+const KPI = {
+  MY:{facebook:{er:[1.5,2.0], fg:[100,200], ss:[5,10]},  instagram:{er:[1.5,2.0], fg:[47,95],  ss:[20,40]}},
+  SG:{facebook:{er:[1.0,1.5], fg:[20,80],   ss:[5,10]},  instagram:{er:[1.5,2.0], fg:[20,80],  ss:[10,40]}}
+};
+
+const PLATS = [
+  ["facebook","Facebook","var(--fb)","Reactions, comments and shares organically, plus engagements on Facebook ads, over post reach plus paid impressions."],
+  ["instagram","Instagram","var(--ig)","Likes, comments, shares and saves organically, plus engagements on Instagram ads, over post reach plus paid impressions."]
+];
+
+const ICON = {
+  facebook:'<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path d="M13.4 23.9v-8.7h2.9l.5-3.4h-3.4V9.6c0-1 .3-1.6 1.7-1.6h1.8V5c-.3 0-1.4-.1-2.6-.1-2.6 0-4.3 1.6-4.3 4.5v2.4H7v3.4h3v8.7z" fill="#fff"/></svg>',
+  instagram:'<svg class="ico" viewBox="0 0 24 24"><rect x=".5" y=".5" width="23" height="23" rx="7" fill="#E4405F"/><rect x="5.6" y="5.6" width="12.8" height="12.8" rx="4.2" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="17.1" cy="6.9" r="1.25" fill="#fff"/></svg>',
+  paid:'<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="#9AA9B2" stroke-width="2"/><path d="M12 6v12M9 9h4a2 2 0 010 4H9m0 0h4.5" fill="none" stroke="#9AA9B2" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+// Placements that carry paid only. Sunway has the same idea; on Inaba these matter because
+// July Malaysia put most of its engagement through Audience Network and Threads.
+const PAID_ONLY = [
+  ["threads","Threads","Paid placement only. There is no organic Threads presence to blend it with."],
+  ["audience_network","Audience Network","Paid placement only, off-platform inventory. No organic side."],
+  ["messenger","Messenger","Paid placement only, negligible delivery."]
+];
+
+const PAID_LABEL = {facebook:"Facebook", instagram:"Instagram", threads:"Threads",
+  audience_network:"Audience Network", messenger:"Messenger"};
+
+const MONTH_TIP = {
+  "2026-04":"Malaysia published nothing this month. Singapore ran Instagram only.",
+  "2026-06":"Malaysia published nothing this month.",
+  "2026-07":"Malaysia carried a Brand Film on Audience Network and Threads: 44,661 of its paid engagements and RM443 of its RM748 spend. Compare later months on Facebook and Instagram only, or the change is not like for like.",
+  "2026-09":"1 to 14 September. No paid has run in either market this month, so every rate here is organic only."
+};
+
+// ---------------------------------------------------------------------------
+const n = v => (v == null ? "n/a" : Math.round(v).toLocaleString("en-GB"));
+const n2 = v => (v == null ? "n/a" : v.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}));
+const mLong = m => new Date(m + "-01T00:00:00").toLocaleDateString("en-GB",{month:"long"});
+const mShort = m => new Date(m + "-01T00:00:00").toLocaleDateString("en-GB",{month:"short"});
+const tip = (t,inner) => `<span class="tip" data-tip="${String(t).replace(/"/g,'&quot;')}">${inner}</span>`;
+const sum = (obj,f) => Object.values(obj||{}).reduce((a,v)=>a+(v[f]||0),0);
+
+let market = "MY", period = "mtd", view = "er";
+
+function slice(mk, key){
+  const Pd = PERIODS[key];
+  if (Pd.month){ const d = DATA[mk][Pd.month]; return {o:d.o, p:d.p, fol:{fb:FOL[mk][Pd.month].fb, ig:FOL[mk][Pd.month].ig}, month:Pd.month}; }
+  const w = WIN[mk][Pd.win]; return {o:w.o, p:w.p, fol:w.fol, month:null};
+}
+function slicePrev(mk, key){
+  const Pd = PERIODS[key];
+  if (Pd.month){ const i = MONTHS.indexOf(Pd.month); if (i<=0) return null;
+    const pm = MONTHS[i-1]; const d = DATA[mk][pm];
+    return {o:d.o, p:d.p, fol:{fb:FOL[mk][pm].fb, ig:FOL[mk][pm].ig}, month:pm}; }
+  const w = WIN[mk][Pd.prevWin]; return {o:w.o, p:w.p, fol:w.fol, month:null};
+}
+
+// blended figures for one platform in one slice
+function blend(s, k){
+  const o = (s.o||{})[k] || z;
+  const p = (s.p||{})[k] || {spend:0,impr:0,eng:0,vv:0,reach:0,clicks:0};
+  const eng = o.eng + p.eng, base = o.reach + p.impr;
+  return {posts:o.posts, oReach:o.reach, oEng:o.eng, shares:o.shares, saves:o.saves, oVV:o.vv,
+          spend:p.spend, pImpr:p.impr, pEng:p.eng, pVV:p.vv, pReach:p.reach, clicks:p.clicks,
+          eng, base, er: base>0 ? eng/base*100 : null,
+          oer: o.reach>0 ? o.eng/o.reach*100 : null, hasPaid: p.impr>0};
+}
+function grade(v, band){
+  if (v == null || !band) return ["na","No data"];
+  if (v < band[0]) return ["bad","Below " + band[0] + "%"];
+  if (v > band[1]) return ["ok","Above " + band[1] + "%"];
+  return ["warn","On target"];
+}
+function gradeCount(v, band){
+  if (v == null || !band) return ["na","No data"];
+  if (v < band[0]) return ["bad","Below " + n(band[0])];
+  if (v > band[1]) return ["ok","Above " + n(band[1])];
+  return ["warn","On target"];
+}
+function deltaPct(now, before){
+  if (now == null || before == null || !before) return "";
+  const d = (now-before)/before*100;
+  const c = d>0.05?"up":d<-0.05?"down":"flat", a = d>0.05?"&#9650;":d<-0.05?"&#9660;":"&#9632;";
+  return `<span class="delta ${c}"><span class="arrow">${a}</span>${Math.abs(d).toFixed(1)}%</span>`;
+}
+function deltaPts(now, before){
+  if (now == null || before == null) return "";
+  const d = now-before;
+  const c = d>0.005?"up":d<-0.005?"down":"flat", a = d>0.005?"&#9650;":d<-0.005?"&#9660;":"&#9632;";
+  return `<span class="delta ${c}"><span class="arrow">${a}</span>${Math.abs(d)<0.005?"level":Math.abs(d).toFixed(2)+"%"}</span>`;
+}
+
+let cur, prv;
+
+function card(inner){ return `<div class="c">${inner}</div>`; }
+function head(k,label,colour){ return `<div class="top">${ICON[k]}<span class="nm" style="color:${colour}">${label}</span></div>`; }
+
+function renderER(){
+  document.getElementById("h1a").textContent = MARKETS[market].label + " . " + PERIODS[period].label + ": " + PERIODS[period].range;
+  document.getElementById("p1a").textContent = "Blended engagement rate, organic and paid together, each platform on its own. The organic-only rate sits underneath.";
+  document.getElementById("h2a").textContent = "How each rate is built";
+  document.getElementById("p2a").textContent = "Organic, paid and the two blended together, for the period selected above.";
+  detail();
+  showDetail(true);
+  document.getElementById("h3a").textContent = "Month by month";
+  document.getElementById("p3a").textContent = "Blended engagement rate per platform, every month on record for this market.";
+  document.getElementById("cards").innerHTML = PLATS.map(([k,label,colour,desc]) => {
+    const b = blend(cur,k), pb = prv ? blend(prv,k) : null;
+    const band = KPI[market][k].er, g = grade(b.er, band);
+    return card(head(k,label,colour) +
+      `<div class="row2"><span class="big">${b.er==null?"n/a":b.er.toFixed(2)}<span class="unit">%</span></span>${pb?deltaPts(b.er,pb.er):""}</div>` +
+      `<div class="sub2">${tip(desc, "blended")} . organic only ${b.oer==null?"n/a":b.oer.toFixed(2)+"%"}</div>` +
+      `<div class="sub2">${n(b.eng)} engagements over ${n(b.base)} ${b.hasPaid?"reach plus impressions":"reach"}</div>` +
+      `<div class="sub2">${b.posts} post${b.posts===1?"":"s"}${b.hasPaid?" . paid running":" . no paid"}</div>` +
+      `<span class="pill ${g[0]}">${tip("KPI band " + band[0] + "% to " + band[1] + "% a month.", g[1])}</span>`);
+  }).join("");
+
+  let t = `<thead><tr><th>Month</th><th>FB posts</th><th>FB reach</th><th>FB ER</th><th>IG posts</th><th>IG reach</th><th>IG ER</th></tr></thead><tbody>`;
+  MONTHS.forEach(m => {
+    const s = {o:DATA[market][m].o, p:DATA[market][m].p};
+    const f = blend(s,"facebook"), i = blend(s,"instagram");
+    const lbl = MONTH_TIP[m] ? tip(MONTH_TIP[m], mLong(m)) : mLong(m);
+    t += `<tr><td>${lbl}</td><td>${f.posts}</td><td>${n(f.oReach)}</td><td>${f.er==null?'<span class="muted">n/a</span>':f.er.toFixed(2)+"%"}</td>` +
+         `<td>${i.posts}</td><td>${n(i.oReach)}</td><td>${i.er==null?'<span class="muted">n/a</span>':i.er.toFixed(2)+"%"}</td></tr>`;
+  });
+  document.getElementById("tblTrend").innerHTML = t + "</tbody>";
+
+  document.getElementById("h4a").textContent = "Shares and saves";
+  document.getElementById("p4a").textContent = "The secondary KPI, organic only. Saves are not reported on Facebook.";
+  let h = `<thead><tr><th>Platform</th><th>Shares</th><th>Saves</th><th>Shares + saves</th><th>KPI band</th><th>Status</th></tr></thead><tbody>`;
+  PLATS.forEach(([k,label]) => {
+    const b = blend(cur,k), band = KPI[market][k].ss;
+    const tot = b.shares + b.saves, g = gradeCount(tot, band);
+    h += `<tr><td>${label}</td><td>${n(b.shares)}</td><td>${k==="facebook"?'<span class="muted">n/a</span>':n(b.saves)}</td>` +
+         `<td>${n(tot)}</td><td>${band[0]} to ${band[1]}</td><td><span class="pill ${g[0]}">${g[1]}</span></td></tr>`;
+  });
+  document.getElementById("tblExtra").innerHTML = h + "</tbody>";
+  showExtra(true);
+}
+
+function renderFG(){
+  document.getElementById("h1a").textContent = MARKETS[market].label + " . " + PERIODS[period].label + ": " + PERIODS[period].range;
+  document.getElementById("p1a").textContent = "New follows gained, gross. This is follows gained, not net audience growth.";
+  document.getElementById("h3a").textContent = "New follows month by month";
+  document.getElementById("p3a").textContent = "Gross follows per platform. Blank where the endpoint returned nothing for that month.";
+  document.getElementById("cards").innerHTML = PLATS.map(([k,label,colour]) => {
+    const key = k === "facebook" ? "fb" : "ig";
+    const v = cur.fol ? cur.fol[key] : null, pv = prv && prv.fol ? prv.fol[key] : null;
+    const band = KPI[market][k].fg, g = gradeCount(v, band);
+    return card(head(k,label,colour) +
+      `<div class="row2"><span class="big">${v==null?"n/a":n(v)}</span>${deltaPct(v,pv)}</div>` +
+      `<div class="sub2">${tip("Gross follows, the basis this account reports on. Gross and net differ materially: July Malaysia Instagram was 3,573 gross against 2,998 net.","new follows, gross")}</div>` +
+      (v==null ? `<div class="sub2">The dashboard returned nothing. Read this off MBS Audience &gt; Trends &gt; Follows.</div>` : "") +
+      `<span class="pill ${g[0]}">${tip("KPI band " + n(band[0]) + " to " + n(band[1]) + " new follows a month.", g[1])}</span>`);
+  }).join("");
+
+  let t = `<thead><tr><th>Month</th><th>Facebook</th><th>vs KPI</th><th>Instagram</th><th>vs KPI</th></tr></thead><tbody>`;
+  MONTHS.forEach(m => {
+    const f = FOL[market][m];
+    const gf = gradeCount(f.fb, KPI[market].facebook.fg), gi = gradeCount(f.ig, KPI[market].instagram.fg);
+    t += `<tr><td>${mLong(m)}</td><td>${f.fb==null?'<span class="muted">n/a</span>':n(f.fb)}</td><td><span class="pill ${gf[0]}">${gf[1]}</span></td>` +
+         `<td>${f.ig==null?'<span class="muted">n/a</span>':n(f.ig)}</td><td><span class="pill ${gi[0]}">${gi[1]}</span></td></tr>`;
+  });
+  document.getElementById("tblTrend").innerHTML = t + "</tbody>";
+  showExtra(false);
+}
+
+function renderVV(){
+  document.getElementById("h1a").textContent = MARKETS[market].label + " . " + PERIODS[period].label + ": " + PERIODS[period].range;
+  document.getElementById("p1a").textContent = "Video views, organic post views and paid ad views kept apart. No KPI is set against video, so nothing here is graded.";
+  document.getElementById("h3a").textContent = "Video views month by month";
+  document.getElementById("p3a").textContent = "Organic and paid video views per platform.";
+  document.getElementById("cards").innerHTML = PLATS.map(([k,label,colour]) => {
+    const b = blend(cur,k), pb = prv ? blend(prv,k) : null;
+    const tot = b.oVV + b.pVV, ptot = pb ? pb.oVV + pb.pVV : null;
+    return card(head(k,label,colour) +
+      `<div class="row2"><span class="big">${n(tot)}</span>${deltaPct(tot,ptot)}</div>` +
+      `<div class="sub2">${n(b.oVV)} organic . ${n(b.pVV)} paid</div>` +
+      `<div class="sub2">${tot>0 ? Math.round(b.pVV/tot*100) + "% of views came from paid" : "No video views recorded"}</div>`);
+  }).join("");
+
+  let t = `<thead><tr><th>Month</th><th>FB organic</th><th>FB paid</th><th>IG organic</th><th>IG paid</th><th>Total</th></tr></thead><tbody>`;
+  MONTHS.forEach(m => {
+    const s = {o:DATA[market][m].o, p:DATA[market][m].p};
+    const f = blend(s,"facebook"), i = blend(s,"instagram");
+    t += `<tr><td>${mLong(m)}</td><td>${n(f.oVV)}</td><td>${n(f.pVV)}</td><td>${n(i.oVV)}</td><td>${n(i.pVV)}</td>` +
+         `<td><strong>${n(f.oVV+f.pVV+i.oVV+i.pVV)}</strong></td></tr>`;
+  });
+  document.getElementById("tblTrend").innerHTML = t + "</tbody>";
+  showExtra(false);
+}
+
+function renderPaid(){
+  const cu = MARKETS[market].cur;
+  document.getElementById("h1a").textContent = MARKETS[market].label + " . " + PERIODS[period].label + ": " + PERIODS[period].range;
+  document.getElementById("p1a").textContent = "Paid delivery across every placement. Reach is deduplicated per placement and is never summed.";
+  document.getElementById("h3a").textContent = "Paid by placement";
+  document.getElementById("p3a").textContent = "Every placement that delivered in this period.";
+
+  const p = cur.p || {}, pp = (prv && prv.p) || {};
+  const spend = sum(p,"spend"), impr = sum(p,"impr"), eng = sum(p,"eng"), clicks = sum(p,"clicks");
+  const pSpend = sum(pp,"spend"), pImpr = sum(pp,"impr"), pEng = sum(pp,"eng");
+  const cpm = impr>0 ? spend/impr*1000 : null, pCpm = pImpr>0 ? pSpend/pImpr*1000 : null;
+  const cpe = eng>0 ? spend/eng : null, pCpe = pEng>0 ? pSpend/pEng : null;
+
+  const cards = [
+    ["Spend", spend==null?null:cu + " " + n2(spend), deltaPct(spend,pSpend), "Media spend in this market's ad account currency."],
+    ["Impressions", n(impr), deltaPct(impr,pImpr), "Times an ad was served. Not people."],
+    ["CPM", cpm==null?"n/a":cu + " " + n2(cpm), deltaPts(cpm,pCpm) && "", "Cost per thousand impressions."],
+    ["Cost per engagement", cpe==null?"n/a":cu + " " + n2(cpe), "", "Spend over paid engagements. Ads Manager counts every click as an engagement, which is why paid rates run far above organic."]
+  ];
+  document.getElementById("cards").innerHTML = cards.map(([lbl,val,d,desc]) =>
+    card(`<div class="top"><span class="nm">${lbl}</span></div>` +
+         `<div class="row2"><span class="big">${val}</span>${d||""}</div>` +
+         `<div class="sub2">${tip(desc,"what this is")}</div>`)).join("");
+
+  const keys = Object.keys(p).sort((a,b)=>(p[b].spend||0)-(p[a].spend||0));
+  let t = `<thead><tr><th>Placement</th><th>Spend</th><th>Impressions</th><th>Reach</th><th>Engagements</th><th>Clicks</th><th>CPM</th></tr></thead><tbody>`;
+  if (!keys.length){
+    t += `<tr><td colspan="7" class="muted">No paid delivered in this period.</td></tr>`;
+  } else {
+    keys.forEach(k => { const v = p[k];
+      t += `<tr><td>${PAID_LABEL[k]||k}</td><td>${cu} ${n2(v.spend)}</td><td>${n(v.impr)}</td><td>${n(v.reach)}</td>` +
+           `<td>${n(v.eng)}</td><td>${n(v.clicks)}</td><td>${v.impr>0?cu+" "+n2(v.spend/v.impr*1000):'<span class="muted">n/a</span>'}</td></tr>`; });
+  }
+  document.getElementById("tblTrend").innerHTML = t + "</tbody>";
+
+  document.getElementById("h4a").textContent = "Paid month by month";
+  document.getElementById("p4a").textContent = "Spend, impressions and cost per thousand, every month on record for this market.";
+  let h = `<thead><tr><th>Month</th><th>Spend</th><th>Impressions</th><th>Engagements</th><th>CPM</th><th>Placements</th></tr></thead><tbody>`;
+  MONTHS.forEach(m => {
+    const pm = DATA[market][m].p, s = sum(pm,"spend"), im = sum(pm,"impr"), e = sum(pm,"eng");
+    const k = Object.keys(pm).length;
+    const lbl = MONTH_TIP[m] ? tip(MONTH_TIP[m], mLong(m)) : mLong(m);
+    h += `<tr><td>${lbl}</td><td>${k?cu+" "+n2(s):'<span class="muted">none</span>'}</td><td>${k?n(im):"&mdash;"}</td>` +
+         `<td>${k?n(e):"&mdash;"}</td><td>${im>0?cu+" "+n2(s/im*1000):"&mdash;"}</td><td>${k||"&mdash;"}</td></tr>`;
+  });
+  document.getElementById("tblExtra").innerHTML = h + "</tbody>";
+  showExtra(true);
+}
+
+// Organic, paid and blended side by side, for whichever period is selected.
+function detail(){
+  const cu = MARKETS[market].cur;
+  const TH = {
+    reach: tip("Summed post reach, not unique people. Someone who saw four posts counts four times.","Reach"),
+    oeng: tip("Organic engagements. Facebook counts reactions, comments and shares. Instagram counts likes, comments, shares and saves.","Engagements"),
+    spend: tip("Media spend from the Meta ad summary, in this market's ad account currency.","Spend"),
+    impr: tip("Paid impressions, not reach. Impressions is the denominator on the paid side.","Impressions"),
+    peng: tip("Engagements recorded against paid delivery. Ads Manager counts every click, which is why the paid side runs far above organic.","Engagements"),
+    base: tip("Organic reach plus paid impressions. This is the denominator for the blended rate.","Reach + impr."),
+    er: tip("Blended engagements divided by reach plus impressions, organic and paid together.","Eng. rate"),
+    kpi: tip("The engagement-rate band from the Inaba Ciao KPI brief, per market and platform.","KPI band")
+  };
+  let h = `<thead>
+    <tr><th class="grp"></th><th colspan="3" class="grp">ORGANIC</th><th colspan="3" class="grp">PAID</th>
+        <th colspan="4" class="grp">BLENDED</th></tr>
+    <tr><th>Platform</th><th>Posts</th><th>${TH.reach}</th><th>${TH.oeng}</th>
+        <th>${TH.spend}</th><th>${TH.impr}</th><th>${TH.peng}</th>
+        <th>Engagements</th><th>${TH.base}</th><th>${TH.er}</th><th>${TH.kpi}</th></tr></thead><tbody>`;
+  PLATS.forEach(([k,label,colour,desc]) => {
+    const b = blend(cur,k), band = KPI[market][k].er;
+    const cls = b.er === null ? "" : (b.er >= band[0] ? " hit" : " miss");
+    h += `<tr><td class="plat" style="--c:${colour}"><span class="platname">${ICON[k]}${tip(desc,label)}</span></td>
+      <td>${b.posts}</td><td>${n(b.oReach)}</td><td>${n(b.oEng)}</td>
+      <td>${b.spend ? cu + " " + n(b.spend) : "&mdash;"}</td>
+      <td>${b.pImpr ? n(b.pImpr) : "&mdash;"}</td><td>${b.pEng ? n(b.pEng) : "&mdash;"}</td>
+      <td>${n(b.eng)}</td><td>${n(b.base)}</td>
+      <td class="er${cls}">${b.er === null ? "n/a" : b.er.toFixed(2) + "%"}</td>
+      <td class="kpi">${band[0]} to ${band[1]}%</td></tr>`;
+  });
+  const shown = PAID_ONLY.filter(([k]) => (cur.p || {})[k]);
+  if (shown.length){
+    h += `<tr class="sub"><td colspan="11">PAID-ONLY PLACEMENTS</td></tr>`;
+    shown.forEach(([k,label,desc]) => { const b = blend(cur,k);
+      h += `<tr><td class="plat" style="--c:#C7D2E0"><span class="platname">${ICON.paid}${tip(desc,label)}</span></td>
+        <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
+        <td>${cu} ${n(b.spend)}</td><td>${n(b.pImpr)}</td><td>${n(b.pEng)}</td>
+        <td>${n(b.eng)}</td><td>${n(b.base)}</td>
+        <td class="er">${b.base > 0 ? b.er.toFixed(2) + "%" : "n/a"}</td>
+        <td class="kpi">&mdash;</td></tr>`; });
+  }
+  document.getElementById("tblDetail").innerHTML = h + "</tbody>";
+}
+
+function showDetail(on){
+  ["h2a","p2a","wrapDetail"].forEach(id => document.getElementById(id).hidden = !on);
+}
+function showExtra(on){
+  ["h4a","p4a","wrapExtra"].forEach(id => document.getElementById(id).hidden = !on);
+}
+
+function render(){
+  cur = slice(market, period);
+  prv = slicePrev(market, period);
+  showDetail(false);
+  document.getElementById("scopeNote").innerHTML =
+    "Cards cover " + PERIODS[period].range + " for " + MARKETS[market].label + ", against " + PERIODS[period].vs +
+    ". The tables underneath stay monthly. " +
+    tip("Reach is deduplicated unique people, so Malaysia and Singapore can never be added together. Switch markets instead.","Markets are never combined.");
+  view === "er" ? renderER() : view === "fg" ? renderFG() : view === "vv" ? renderVV() : renderPaid();
+}
+
+function wire(id, prop, set){
+  document.getElementById(id).addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    set(b.dataset[prop]);
+    [...document.querySelectorAll("#" + id + " button")].forEach(x => x.setAttribute("aria-pressed", x === b));
+    render();
+  });
+}
+wire("marketTabs","m", v => market = v);
+wire("periodTabs","p", v => period = v);
+wire("viewTabs","v", v => view = v);
+
+document.getElementById("foot").innerHTML =
+  "Source: socialdashboard.openminds.my, accounts inaba-ciao-malaysia and inaba-ciao-singapore. " +
+  "Organic bucketed on publish date. Built 15 September 2026. " +
+  tip("Both ad accounts report in MYR, so Malaysia and Singapore spend are directly comparable. Reach still is not: it is deduplicated people per market and is never summed.","Paid spend is MYR across both markets.");
+
+render();
+
+const tt = document.getElementById("tt");
+document.addEventListener("mouseover", e => {
+  const el = e.target.closest("[data-tip]"); if (!el) return;
+  tt.textContent = el.dataset.tip; tt.style.opacity = "1";
+  const move = ev => {
+    const pad = 14, w = Math.min(290, window.innerWidth - 24);
+    let x = ev.clientX + pad, y = ev.clientY + pad;
+    if (x + w > window.innerWidth - 12) x = window.innerWidth - w - 12;
+    if (y + tt.offsetHeight > window.innerHeight - 12) y = ev.clientY - tt.offsetHeight - pad;
+    tt.style.left = x + "px"; tt.style.top = y + "px";
+  };
+  move(e);
+  el.addEventListener("mousemove", move);
+  el.addEventListener("mouseleave", () => { tt.style.opacity = "0"; el.removeEventListener("mousemove", move); }, {once:true});
+});
+</script>
+</body>
+</html>
