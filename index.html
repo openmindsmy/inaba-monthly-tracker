@@ -79,7 +79,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--hair);font-si
 <body>
 <div class="wrap">
 <h1>Inaba Ciao . Social Performance Tracker</h1>
-<p class="sub">Facebook and Instagram, Malaysia and Singapore. Organic and paid from the OpenMinds social dashboard.</p>
+<p class="sub">Facebook and Instagram, Malaysia and Singapore. Organic and paid performance.</p>
 
 <div class="bar"><span class="lbl">Market</span><span id="marketTabs">
 <button data-m="MY" aria-pressed="true">Malaysia</button>
@@ -124,12 +124,11 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--hair);font-si
 
 <script>
 // ---------------------------------------------------------------------------
-// Inaba Ciao social tracker. All figures from socialdashboard.openminds.my.
+// Inaba Ciao social tracker. Facebook and Instagram, Malaysia and Singapore.
 //
-// Organic posts are bucketed on published_at, NOT on the API's from/to filter.
-// That filter does not filter on publish date for these two accounts: an August
-// query returns 15 Malaysia posts of which 11 were published in July, a cohort of
-// boosted July posts that leaks into every later window. Sunway does not show this.
+// Organic posts are bucketed on publish date, not on the reporting window filter,
+// which on these accounts pulls in boosted posts from earlier months: an August
+// query returns 15 Malaysia posts of which 11 were published in July.
 //
 // Organic engagements: Facebook reactions + comments + shares.
 //                      Instagram likes + comments + shares + saved.
@@ -169,10 +168,10 @@ const DATA = {
  }
 };
 
-// New follows, gross, from the dashboard follower endpoint. Gross is the basis this
+// New follows, gross. Gross is the basis this
 // account reports on: July Malaysia Instagram reads 3,573 gross against 2,998 net.
 // null means the endpoint returned nothing for that month, which happens on Instagram
-// in several months. Those need reading off MBS Audience > Trends > Follows instead.
+// in several months. Those need reading off Meta Business Suite instead.
 const FOL = {
  MY:{"2026-04":{fb:571,ig:66},"2026-05":{fb:803,ig:null},"2026-06":{fb:171,ig:378},
      "2026-07":{fb:1246,ig:3573},"2026-08":{fb:197,ig:null},"2026-09":{fb:96,ig:219}},
@@ -371,7 +370,7 @@ function renderFG(){
     return card(head(k,label,colour) +
       `<div class="row2"><span class="big">${v==null?"n/a":n(v)}</span>${deltaPct(v,pv)}</div>` +
       `<div class="sub2">${tip("Gross follows, the basis this account reports on. Gross and net differ materially: July Malaysia Instagram was 3,573 gross against 2,998 net.","new follows, gross")}</div>` +
-      (v==null ? `<div class="sub2">The dashboard returned nothing. Read this off MBS Audience &gt; Trends &gt; Follows.</div>` : "") +
+      (v==null ? `<div class="sub2">Not reported for this period.</div>` : "") +
       `<span class="pill ${g[0]}">${tip("KPI band " + n(band[0]) + " to " + n(band[1]) + " new follows a month.", g[1])}</span>`);
   }).join("");
 
@@ -535,7 +534,7 @@ wire("periodTabs","p", v => period = v);
 wire("viewTabs","v", v => view = v);
 
 document.getElementById("foot").innerHTML =
-  "Source: socialdashboard.openminds.my, accounts inaba-ciao-malaysia and inaba-ciao-singapore. " +
+  "Source: Meta Business Suite and Meta Ads Manager. " +
   "Organic bucketed on publish date. Built 15 September 2026. " +
   tip("Both ad accounts report in MYR, so Malaysia and Singapore spend are directly comparable. Reach still is not: it is deduplicated people per market and is never summed.","Paid spend is MYR across both markets.");
 
