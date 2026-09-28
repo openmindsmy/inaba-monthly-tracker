@@ -153,7 +153,8 @@ const DATA = {
        threads:P(8.82,12636,8296,12276,12636,0)}},
   "2026-08":{o:{facebook:O(2,1866,72,0,14,0), instagram:O(2,6918,925,14055,302,24)},
     p:{facebook:P(518.75,89753,17599,84849,37273,2119), instagram:P(240.01,50290,7340,48590,27938,492)}},
-  "2026-09":{o:{facebook:O(5,1016,8,132,2,0), instagram:O(4,3786,121,8165,13,3)}, p:{}}
+  "2026-09":{o:{facebook:O(8,75016,2165,36929,2,0), instagram:O(7,6507,189,14282,20,3)},
+    p:{facebook:P(298.14,52967,11477,41319,34734,2343), instagram:P(109.47,21192,2137,17714,15670,59), threads:P(63.45,66839,24355,63911,56873,0)}}
  },
  SG: {
   "2026-04":{o:{facebook:O(0,0,0,0,0,0), instagram:O(4,909,23,1405,1,2)}, p:{}},
@@ -164,7 +165,8 @@ const DATA = {
   "2026-08":{o:{facebook:O(1,6113,17,0,0,0), instagram:O(2,1708,361,3834,59,2)},
     p:{facebook:P(1158.88,133692,19513,115900,45538,1961), instagram:P(846.02,53889,8776,44827,23533,738),
        threads:P(11.16,2505,8,0,1066,5)}},
-  "2026-09":{o:{facebook:O(2,7,0,8,0,0), instagram:O(3,213,24,414,1,0)}, p:{}}
+  "2026-09":{o:{facebook:O(6,14475,207,8317,2,0), instagram:O(5,915,33,2089,2,0)},
+    p:{facebook:P(148.74,7909,1002,6155,4881,214), instagram:P(68.13,3146,380,2701,2336,5)}}
  }
 };
 
@@ -174,44 +176,48 @@ const DATA = {
 // in several months. Those need reading off Meta Business Suite instead.
 const FOL = {
  MY:{"2026-04":{fb:571,ig:66},"2026-05":{fb:803,ig:null},"2026-06":{fb:171,ig:378},
-     "2026-07":{fb:1246,ig:3573},"2026-08":{fb:197,ig:null},"2026-09":{fb:96,ig:219}},
+     "2026-07":{fb:1246,ig:3573},"2026-08":{fb:197,ig:null},"2026-09":{fb:114,ig:291}},
  SG:{"2026-04":{fb:0,ig:14},"2026-05":{fb:0,ig:null},"2026-06":{fb:0,ig:163},
-     "2026-07":{fb:25,ig:null},"2026-08":{fb:31,ig:null},"2026-09":{fb:0,ig:3}}
+     "2026-07":{fb:25,ig:null},"2026-08":{fb:31,ig:null},"2026-09":{fb:1,ig:7}}
 };
 
 // Rolling windows, each with the matching previous window so comparisons are like for like.
 const WIN = {
  MY:{
-  last7: {o:{facebook:O(3,539,4,132,0,0), instagram:O(3,2360,98,4985,10,3)}, p:{}, fol:{fb:42,ig:94}},
-  prev7: {o:{facebook:O(2,477,4,0,2,0), instagram:O(1,1426,23,3180,3,0)}, p:{}, fol:{fb:54,ig:125}},
-  last30:{o:{facebook:O(7,2882,80,132,16,0), instagram:O(6,10704,1046,22220,315,27)},
-    p:{facebook:P(383.88,69587,13157,65893,30330,1484), instagram:P(154.97,29169,4344,28389,18964,337)},
-    fol:{fb:255,ig:596}},
-  prev30:{o:{facebook:O(3,6206,111,8740,2,0), instagram:O(4,5301,251,9918,37,8)},
-    p:{audience_network:P(434.12,46504,44661,46243,14052,0), facebook:P(261.07,65681,10013,61903,35271,1267),
-       instagram:P(158.06,48239,5157,47040,23832,162), messenger:P(0.05,185,39,160,182,0),
-       threads:P(8.83,12635,8296,12276,12635,0)},
-    fol:{fb:60,ig:126}}
+  last7: {o:{facebook:O(2,73147,2140,36763,2,0), instagram:O(2,1237,38,2503,4,0)},
+    p:{facebook:P(298.14,52967,11477,41319,34734,2343), instagram:P(109.47,21192,2137,17714,15670,59), threads:P(63.45,66839,24355,63911,56873,0)},
+    fol:{fb:12,ig:21}},
+  prev7: {o:{facebook:O(2,887,18,0,0,0), instagram:O(2,1532,59,4124,4,0)},
+    p:{},
+    fol:{fb:10,ig:51}},
+  last30:{o:{facebook:O(8,75016,2165,36929,2,0), instagram:O(7,6507,189,14282,20,3)},
+    p:{facebook:P(347.65,62844,12848,50698,40490,2512), instagram:P(110.28,21242,2148,17760,15682,61), threads:P(63.46,66839,24355,63911,56873,0)},
+    fol:{fb:211,ig:528}},
+  prev30:{o:{facebook:O(3,2171,79,0,15,0), instagram:O(4,9566,1072,20007,317,22)},
+    p:{audience_network:P(6.37,728,717,727,230,0), facebook:P(486.02,86230,16969,81555,39453,2054), instagram:P(248.25,53896,7582,52176,30207,491), threads:P(0.46,730,496,703,728,0)},
+    fol:{fb:102,ig:202}}
  },
  SG:{
-  last7: {o:{facebook:O(2,7,0,8,0,0), instagram:O(2,120,16,245,1,0)}, p:{}, fol:{fb:0,ig:1}},
-  prev7: {o:{facebook:O(0,0,0,0,0,0), instagram:O(1,93,8,169,0,0)}, p:{}, fol:{fb:0,ig:2}},
-  last30:{o:{facebook:O(2,7,0,8,0,0), instagram:O(4,705,49,1106,2,0)},
-    p:{facebook:P(430.66,45529,6040,35942,22249,645), instagram:P(288.53,15990,2239,10539,8936,215),
-       threads:P(8.16,1872,7,0,921,5)},
-    fol:{fb:9,ig:31}},
-  prev30:{o:{facebook:O(4,11943,209,16837,1,0), instagram:O(5,2197,403,4856,63,6)},
-    p:{facebook:P(1171.13,121161,18055,110011,41157,2068), instagram:P(847.29,56171,9570,51481,23680,731),
-       threads:P(3.00,633,1,0,387,0)},
-    fol:{fb:47,ig:91}}
+  last7: {o:{facebook:O(2,7118,168,8290,2,0), instagram:O(2,316,9,580,1,0)},
+    p:{facebook:P(148.74,7909,1002,6155,4881,214), instagram:P(68.13,3146,380,2701,2336,5)},
+    fol:{fb:1,ig:2}},
+  prev7: {o:{facebook:O(3,7334,39,0,0,0), instagram:O(2,500,16,1328,1,0)},
+    p:{},
+    fol:{fb:0,ig:2}},
+  last30:{o:{facebook:O(6,14475,207,8317,2,0), instagram:O(5,915,33,2089,2,0)},
+    p:{facebook:P(148.74,7909,1002,6155,4881,214), instagram:P(68.13,3146,380,2701,2336,5)},
+    fol:{fb:1,ig:8}},
+  prev30:{o:{facebook:O(2,6286,17,0,0,0), instagram:O(2,750,39,1239,2,1)},
+    p:{facebook:P(1272.68,142596,20798,124519,47433,2179), instagram:P(938.41,60298,9948,51015,25561,842), threads:P(11.16,2505,8,0,1066,5)},
+    fol:{fb:37,ig:100}}
  }
 };
 
 const PERIODS = {
-  mtd:     {label:"Month to date", range:"1 to 14 Sep 2026",     vs:"August",              month:"2026-09"},
+  mtd:     {label:"Month to date", range:"1 to 27 Sep 2026",     vs:"August",              month:"2026-09"},
   lastmon: {label:"Last month",    range:"1 to 31 Aug 2026",     vs:"July",                month:"2026-08"},
-  last30:  {label:"Last 30 days",  range:"16 Aug to 14 Sep 2026",vs:"the 30 days before",  win:"last30", prevWin:"prev30"},
-  last7:   {label:"Last 7 days",   range:"8 to 14 Sep 2026",     vs:"the 7 days before",   win:"last7",  prevWin:"prev7"}
+  last30:  {label:"Last 30 days",  range:"29 Aug to 27 Sep 2026",vs:"the 30 days before",  win:"last30", prevWin:"prev30"},
+  last7:   {label:"Last 7 days",   range:"21 to 27 Sep 2026",    vs:"the 7 days before",   win:"last7",  prevWin:"prev7"}
 };
 
 // Both ad accounts report spend in MYR, so Singapore is RM too, not SGD.
